@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>માસ્ટર ઇન્વિટેશન લિસ્ટ - ફિલ્ટર અને રિપોર્ટ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">માસ્ટર ઇન્વિટેશન લિસ્ટ - ફિલ્ટર અને રિપોર્ટ</h1>
+
+        <!-- Event Selector Filters -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">ઇવેન્ટ સિલેક્ટર</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Coming Events -->
+                <div class="border p-4 rounded">
+                    <h3 class="font-bold text-lg mb-3 text-green-700">આવવાના ઇવેન્ટ્સ</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="sagai" id="comingSagai">
+                            <span>સગાઈ</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="haldi" id="comingHaldi">
+                            <span>હળદી</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="mandap" id="comingMandap">
+                            <span>મંડપ</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="dandiya" id="comingDandiya">
+                            <span>ડાંડિયા</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="jaan" id="comingJaan">
+                            <span>જાન</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Not Coming Events -->
+                <div class="border p-4 rounded">
+                    <h3 class="font-bold text-lg mb-3 text-red-700">ન આવવાના ઇવેન્ટ્સ</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="sagai" id="notComingSagai">
+                            <span>સગાઈ</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="haldi" id="notComingHaldi">
+                            <span>હળદી</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="mandap" id="notComingMandap">
+                            <span>મંડપ</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="dandiya" id="notComingDandiya">
+                            <span>ડાંડિયા</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2" value="jaan" id="notComingJaan">
+                            <span>જાન</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regular Filters -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div>
+                    <label class="block text-gray-700">શહેર</label>
+                    <select id="filterCity" class="w-full p-2 border rounded">
+                        <option value="">બધા</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700">સંબંધ</label>
+                    <select id="filterPerson" class="w-full p-2 border rounded">
+                        <option value="">બધા</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-gray-700">કંકોત્રી/કાર્ડ</label>
+                    <select id="filterKankotriCard" class="w-full p-2 border rounded">
+                        <option value="">બધા</option>
+                        <option value="કંકોત્રી">કંકોત્રી</option>
+                        <option value="કાર્ડ">કાર્ડ</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex mt-6">
+                <button onclick="applyEventFilters()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    ફિલ્ટર લાગુ કરો
+                </button>
+                <button onclick="clearEventFilters()" class="ml-2 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    ક્લિયર કરો
+                </button>
+                <button onclick="showAllData()" class="ml-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    બધું બતાવો
+                </button>
+            </div>
+
+            <!-- Current Selection Display -->
+            <div id="currentSelection" class="mt-4 p-3 bg-gray-50 rounded text-sm"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">સરવાળો</h2>
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                <div class="text-center p-4 bg-blue-50 rounded">
+                    <div class="text-2xl font-bold" id="totalPeople">0</div>
+                    <div class="text-gray-600">કુલ લોકો</div>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded">
+                    <div class="text-2xl font-bold" id="totalSagai">0</div>
+                    <div class="text-gray-600">સગાઈ</div>
+                </div>
+                <div class="text-center p-4 bg-yellow-50 rounded">
+                    <div class="text-2xl font-bold" id="totalHaldi">0</div>
+                    <div class="text-gray-600">હળદી</div>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded">
+                    <div class="text-2xl font-bold" id="totalMandap">0</div>
+                    <div class="text-gray-600">મંડપ</div>
+                </div>
+                <div class="text-center p-4 bg-pink-50 rounded">
+                    <div class="text-2xl font-bold" id="totalDandiya">0</div>
+                    <div class="text-gray-600">ડાંડિયા</div>
+                </div>
+                <div class="text-center p-4 bg-indigo-50 rounded">
+                    <div class="text-2xl font-bold" id="totalJaan">0</div>
+                    <div class="text-gray-600">જાન</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">ઇન્વિટેશન લિસ્ટ <span id="filterStatus" class="text-sm text-gray-600"></span></h2>
+                <button onclick="downloadPDF()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                    PDF ડાઉનલોડ કરો
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full border-collapse border border-gray-300">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="border p-2">Sr No.</th>
+                            <th class="border p-2">નામ</th>
+                            <th class="border p-2">મોબાઈલ નંબર</th>
+                            <th class="border p-2">શહેર</th>
+                            <th class="border p-2">સંબંધ</th>
+                            <th class="border p-2">કંકોત્રી/કાર્ડ</th>
+                            <th class="border p-2">સગાઈ</th>
+                            <th class="border p-2">હળદી</th>
+                            <th class="border p-2">મંડપ</th>
+                            <th class="border p-2">ડાંડિયા</th>
+                            <th class="border p-2">જાન</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
